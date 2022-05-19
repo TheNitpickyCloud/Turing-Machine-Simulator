@@ -79,7 +79,7 @@ export default {
     let mouseover = false
 
     nodes.value = [ //the node data
-      { id: 1, settings: false, nodetype: "Rejecting", input: false, name: 1 },
+      { id: 1, settings: false, nodetype: null, input: false, name: 1 },
     ]
 
     //initialize adjacency list
@@ -124,7 +124,7 @@ export default {
     }
 
     async function addNode(){
-      nodes.value.push({id: (nodes.value.length ? nodes.value[nodes.value.length-1].id+1 : 1), settings: false, nodetype: "Rejecting", input: false, name: (nodes.value.length ? nodes.value[nodes.value.length-1].id+1 : 1)})
+      nodes.value.push({id: (nodes.value.length ? nodes.value[nodes.value.length-1].id+1 : 1), settings: false, nodetype: null, input: false, name: (nodes.value.length ? nodes.value[nodes.value.length-1].id+1 : 1)})
       adj.value[nodes.value[nodes.value.length-1].id] = []
 
       await nextTick()

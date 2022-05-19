@@ -47,6 +47,7 @@ export default {
     let loc = 0
     let lastChild = null
     let arr2 = []
+    let done = false
 
     function updateStr(){
       nxt.value = startstr.value.value
@@ -97,6 +98,7 @@ export default {
             //algorithm to determine the output
             while(arr.length){
               let node = arr.pop()
+
               if(node.trav < startstr.value.value.length){
                 props.adj[node.id].forEach((child) => {
                   let proceed = true
@@ -124,13 +126,15 @@ export default {
                   }
                 })
               }
-              else if(node.trav == startstr.value.value.length){
-                props.nodes.forEach((nd) => {
-                  if(node.id == nd.id){
+
+              props.nodes.forEach((nd) => {
+                if(node.id == nd.id){
+                  if(nd.nodetype == "Accepting" || nd.nodetype == "Rejecting"){
                     ans.push(nd.nodetype)
+                    arr = []
                   }
-                })
-              }
+                }
+              })
             }
 
             if(runtype.value == 'immediately'){
@@ -138,16 +142,29 @@ export default {
             }
             else{
               if(lastChild != null){
-                lastChild.line.color = '#fc7e54FF'
+                lastChild.line.color = '#ff4b32ff'
                 lastChild.line.size--
                 lastChild = null
               }
 
-              if(loc < startstr.value.value.length){
+              if(loc < startstr.value.value.length && !done){
                 let arr3 = []
 
                 while(arr2.length){
                   let node = arr2.pop()
+
+                  props.nodes.forEach((nd) => {
+                    if(node.id == nd.id){
+                      if(nd.nodetype == "Accepting" || nd.nodetype == "Rejecting"){
+                        done = true
+                      }
+                    }
+                  })
+
+                  if(done){
+                    break
+                  }
+
                   if(node.trav == loc){
                     props.adj[node.id].forEach((child) => {
                       let letters = []
@@ -167,15 +184,26 @@ export default {
                   }
                 }
 
-                arr2 = []
-                arr3.forEach((arrr) => {
-                  arr2.push(arrr)
-                })
+                if(!done){
+                  arr2 = []
+                  arr3.forEach((arrr) => {
+                    arr2.push(arrr)
+                  })
 
-                prev.value += curr.value
-                curr.value = nxt.value[0]
-                nxt.value = nxt.value.slice(1, nxt.value.length)
-                loc++
+                  prev.value += curr.value
+                  curr.value = nxt.value[0]
+                  nxt.value = nxt.value.slice(1, nxt.value.length)
+                  loc++
+                }
+                else{
+                  answer.value = ans[0]
+                  prev.value = ''
+                  curr.value = ''
+                  nxt.value = startstr.value.value
+                  arr2 = []
+                  loc = 0
+                  done = false
+                }
               }
               else{
                 answer.value = ans[0]

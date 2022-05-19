@@ -33,7 +33,7 @@ export default {
       props.node.nodetype = nodetype.value
 
       props.nodes.forEach((node) => {
-        if(node.id != props.node.id){
+        if(node.id != props.node.id && node.nodetype == nodetype.value){
           node.nodetype = null
         }
       })
