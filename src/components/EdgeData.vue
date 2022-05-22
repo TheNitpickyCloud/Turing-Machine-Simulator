@@ -13,9 +13,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="vertical-align: middle; margin: auto;" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
     </svg>
-    <input class="changeInput" v-model="changeChar" @input="changeTapeChar" />
+    <input class="changeInput" v-model="changeChar" @input="updateLabel" />
     <div class="tapeMoveSelect">
-      <select v-model="tapeMove">
+      <select v-model="tapeMove" @change="updateLabel" >
         <option>L</option>
         <option>R</option>
       </select>
@@ -67,7 +67,7 @@ export default {
         props.line.line.middleLabel = LeaderLine.obj.pathLabel(lineLabel.value)
       }
 
-      emit("edgeLabelUpdated", props.line.fromID, props.line.toID, lineLabel.value) //edge from, edge to, update that adjacency list
+      emit("edgeLabelUpdated", props.line.fromID, props.line.toID, lineLabel.value, changeChar.value, tapeMove.value) //edge from, edge to, update that adjacency list
     }
 
     return { removeEdge, updateLabel, lineLabel, linetype, changeType, changeChar, tapeMove }

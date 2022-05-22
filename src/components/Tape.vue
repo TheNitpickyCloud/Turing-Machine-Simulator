@@ -12,25 +12,20 @@
 </template>
 
 <script>
-import { onBeforeUpdate } from '@vue/runtime-core'
+import { ref, watch } from '@vue/runtime-core'
+
 export default {
-  props: ["inpstr"],
+  props: ["arr", "lpoint"],
   setup(props, {}){
-    let arr = [] //mid = 501st
-    let lpoint = 485
+    const arr = ref(props.arr)
+    const lpoint = ref(props.lpoint)
 
-    for (let i = 0; i <= 1000; i++) {
-      arr.push("~")    
-    }
-
-    onBeforeUpdate(() => {
-      for (let i = 0; i <= 1000; i++) {
-        arr[i] = "~"   
+    watch(
+      () => props.lpoint,
+      () => {
+        lpoint.value = props.lpoint
       }
-      for (let i = 501; i < 501+props.inpstr.length; i++) {
-        arr[i] = props.inpstr[i-501]
-      }
-    })
+    )
 
     return { arr, lpoint }
   }

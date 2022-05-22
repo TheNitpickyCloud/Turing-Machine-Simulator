@@ -2,7 +2,7 @@
     <TweakPane :tweakAble="tweakAble" :lines="lines" />
     <div class="contain">
       <div class="containNodes">
-        <Tape :inpstr="inputstr" />
+        <Tape :arr="arr" :lpoint="lpoint" />
         <div v-for="node in nodes" :key="node.id" :id="node.id" ref="allnodes" class="container" :class="{ 'extraRing': node.nodetype == 'Accepting' }" @click.ctrl="toggleNewLink(node.id)" @click.meta="toggleNewLink(node.id)"> <!-- the actual node, call all functions here --> 
           <Node :name="node.name"/>
           <div class="settingsButton" @click="node.settings = !node.settings"> 
@@ -11,7 +11,7 @@
             </svg>
           </div>
           <div v-if="node.settings" style="position: relative;">
-            <SettingsPanel :nodes="nodes" :node="node" :edgedata="lines" @changedInputNode="updateInputNode" :tweakAble="tweakAble" />
+            <SettingsPanel :nodes="nodes" :node="node" :edgedata="lines" @changedInputNode="updateInputNode" @changedNodeType="changeNodeType" :tweakAble="tweakAble" />
           </div>
           <div class="deleteButton" @click="deleteNode(node.id)">
             <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="red" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <Result :nodes="nodes" :adj="adj" @startstring="setInpString" />
+    <Result :nodes="nodes" :lines="lines" :adj="adj" @startstring="setInpString" :reset="reset" :removed="removed" @changeandmove="changeAndMove" />
 </template>
 
 <script>
@@ -77,10 +77,18 @@ export default {
     const allnodes = ref([]) //nodes DOM elements
     const lines = ref([]) //lines here
     const inputstr = ref('')
+    const arr = ref([]) //mid = 501st
+    const lpoint = ref(485)
+    const adj = ref([]) //adjacency list of nodes
+    const reset = ref(false)
+    const removed = ref(false)
     let selectedOne = false
     let selectedNodeId = null
-    const adj = ref([]) //adjacency list of nodes
     let mouseover = false
+
+    for (let i = 0; i <= 1000; i++) {
+      arr.value.push("~")    
+    }
 
     nodes.value = [ //the node data
       { id: 1, settings: false, nodetype: null, input: false, name: 1 },
@@ -93,33 +101,88 @@ export default {
 
     function setInpString(str){
       inputstr.value = str
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+    }
+
+    function changeAndMove(changeto, moveto){
+      arr.value[lpoint.value+16] = changeto
+      if(moveto == 'L'){
+        lpoint.value--
+      }
+      else{
+        lpoint.value++
+      }
     }
 
     function enterOver(line){
       if(mouseover == false){
         line.line.color = tweakAble.value.edgeHighlightColor
-        line.line.size++
+        line.line.size = 5
         mouseover = true
       }
     }
     function leaveOver(line){
       if(mouseover){
         line.line.color = tweakAble.value.edgeColor
-        line.line.size--
+        line.line.size = 4
         mouseover = false
       }
     }
 
-    function updateLabel(from, to, lineLabel){
-      adj.value[from].forEach((node) => {
-        if(node.to == to){
-          node.label = lineLabel
+    function updateLabel(from, to, lineLabel, changeto, pointermove){
+      adj.value[from].forEach((edge) => {
+        if(edge.to == to){
+          edge.label = lineLabel
+          edge.changeTo = changeto
+          edge.pointerMove = pointermove
         }
       })
+
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+
+      reset.value = !reset.value
+    }
+
+    function changeNodeType(){
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+
+      reset.value = !reset.value
     }
 
     function removeEdge(edgeId){
       mouseover = false
+
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+
+      reset.value = !reset.value
 
       lines.value.forEach((line) => {
         if(line.lineId == edgeId){
@@ -165,6 +228,17 @@ export default {
     }
 
     function updateInputNode(nodeid, val){
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+
+      reset.value = !reset.value
+
       lines.value.forEach((line) => {
         if(line.display == false){
           line.line.remove()
@@ -194,6 +268,17 @@ export default {
     }
 
     function deleteNode(nodeid){
+      lpoint.value = 485
+
+      for (let i = 0; i <= 1000; i++) {
+        arr.value[i] = "~"   
+      }
+      for (let i = 501; i < 501+inputstr.value.length; i++) {
+        arr.value[i] = inputstr.value[i-501]
+      }
+
+      reset.value = !reset.value
+
       nodes.value = nodes.value.filter((node) => node.id != nodeid)
       lines.value.forEach((line) => {
         if(line.fromID == nodeid || line.toID == nodeid){
@@ -270,7 +355,7 @@ export default {
           lines.value.push({line: line, lineId: (lines.value.length ? lines.value[lines.value.length-1].lineId+1 : 1), from: fromname, to: toname, fromID: from.id, toID: to.id, display: true})
 
           //add to adjacency list
-          adj.value[selectedNodeId].push({to: theid, label: '', line: line}) //edge type
+          adj.value[selectedNodeId].push({to: theid, label: '', line: line, changeTo: "~", pointerMove: 'L'}) //edge type
         }
 
         selectedOne = false
@@ -306,7 +391,7 @@ export default {
       })
     })
 
-    return { inputstr, setInpString, tweakAble, nodes, allnodes, toggleNewLink, lines, removeEdge, enterOver, leaveOver, updateLabel, updateInputNode, deleteNode, addNode, adj, linesComputed }
+    return { removed, reset, arr, lpoint, inputstr, changeNodeType, changeAndMove, setInpString, tweakAble, nodes, allnodes, toggleNewLink, lines, removeEdge, enterOver, leaveOver, updateLabel, updateInputNode, deleteNode, addNode, adj, linesComputed }
   }
 }
 </script>

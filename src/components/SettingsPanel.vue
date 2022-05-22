@@ -22,7 +22,7 @@ import { onBeforeMount, onMounted, ref, watch } from '@vue/runtime-core'
 
 export default {
   props: ["node", "edgedata", "tweakAble", "nodes"],
-  emits: ["changedInputNode"],
+  emits: ["changedInputNode", "changedNodeType"],
   setup(props, { emit }){
     const nodetype = ref(null)
     const inputornot = ref(false)
@@ -37,6 +37,8 @@ export default {
           node.nodetype = null
         }
       })
+
+      emit("changedNodeType")
     }
     function inputNodeChanged(){
       emit("changedInputNode", props.node.id, inputornot.value)

@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import { ref } from '@vue/runtime-core'
+import { ref, watch } from '@vue/runtime-core'
 
 export default {
-  props: ["nodes", "adj"],
-  emits: ["startstring"],
+  props: ["nodes", "adj", "lines", "reset"],
+  emits: ["startstring", "changeandmove"],
   setup(props, { emit }){
     const startstr = ref() //input string
     const answer = ref('') //answer
@@ -50,11 +50,33 @@ export default {
     let arr2 = []
     let done = false
 
+    watch(
+      () => props.reset,
+      () => {
+        nxt.value = startstr.value.value
+        prev.value = ''
+        curr.value = ''
+        loc = 0
+        arr2 = []
+        props.lines.forEach((line) => {
+          line.line.color = '#ff4b32ff'
+          line.line.size = 4
+        })
+        lastChild = null
+      }
+    )
+
     function updateStr(){
       nxt.value = startstr.value.value
       prev.value = ''
       curr.value = ''
       loc = 0
+      arr2 = []
+      if(lastChild != null){
+        lastChild.line.color = '#ff4b32ff'
+        lastChild.line.size = 4
+        lastChild = null
+      }
       emit("startstring", startstr.value.value)
     }
 
@@ -77,16 +99,28 @@ export default {
         }
         else{
           let emptyLabel = false
+          let multiplechangeto = false
           for (let i = 0; i < props.adj.length; i++) {
             props.adj[i].forEach((node) => {
-              if(node.label == ''){
+              if(node.label == '' || node.changeTo == ''){
                 emptyLabel = true
+              }
+            })
+          }
+
+          for (let i = 0; i < props.adj.length; i++) {
+            props.adj[i].forEach((node) => {
+              if(node.changeTo.length > 1){
+                multiplechangeto = true
               }
             })
           }
 
           if(emptyLabel){
             alert("please make sure all edges have labels")
+          }
+          else if(multiplechangeto){
+            alert("please make sure all edges have only 1 char to change to")
           }
           else{
             let arr = []
@@ -140,12 +174,61 @@ export default {
             }
 
             if(runtype.value == 'immediately'){
+              let arr = []
+              arr.push({id: inpnode, trav: 0})
+
+              if(arr2.length == 0){
+                arr2.push({id: inpnode, trav: 0})
+              }
+              
+              //algorithm to determine the output
+              while(arr.length){
+                let node = arr.pop()
+
+                if(node.trav < startstr.value.value.length){
+                  props.adj[node.id].forEach((child) => {
+                    let proceed = true
+                    let letters = []
+                    for (let i = 0; i < child.label.length; i++) {
+                      if(child.label[i] == ' '){
+                        proceed = false
+                      }
+                      if(i%2 == 0){
+                        if(child.label[i] == ','){
+                          proceed = false
+                          alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
+                        }
+                        letters.push(child.label[i])
+                      }
+                      else{
+                        if(child.label[i] != ','){
+                          proceed = false
+                          alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
+                        }
+                      }
+                    }
+                    if(proceed && letters.includes(startstr.value.value[node.trav])){
+                      emit("changeandmove", child.changeTo, child.pointerMove)
+                      arr.push({id: child.to, trav: node.trav+1})
+                    }
+                  })
+                }
+
+                props.nodes.forEach((nd) => {
+                  if(node.id == nd.id){
+                    if(nd.nodetype == "Accepting" || nd.nodetype == "Rejecting"){
+                      arr = []
+                    }
+                  }
+                })
+              }
+
               answer.value = ans[0]
             }
             else{
               if(lastChild != null){
                 lastChild.line.color = '#ff4b32ff'
-                lastChild.line.size--
+                lastChild.line.size = 4
                 lastChild = null
               }
 
@@ -179,8 +262,9 @@ export default {
                       if(letters.includes(startstr.value.value[node.trav])){
                         arr3.push({id: child.to, trav: node.trav+1})
                         child.line.color = 'blue'
-                        child.line.size++
+                        child.line.size = 5
                         lastChild = child
+                        emit("changeandmove", child.changeTo, child.pointerMove)
                       }
                     })
                   }
