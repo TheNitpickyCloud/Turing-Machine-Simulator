@@ -2,6 +2,7 @@
     <TweakPane :tweakAble="tweakAble" :lines="lines" />
     <div class="contain">
       <div class="containNodes">
+        <Tape :inpstr="inputstr" />
         <div v-for="node in nodes" :key="node.id" :id="node.id" ref="allnodes" class="container" :class="{ 'extraRing': node.nodetype == 'Accepting' }" @click.ctrl="toggleNewLink(node.id)" @click.meta="toggleNewLink(node.id)"> <!-- the actual node, call all functions here --> 
           <Node :name="node.name"/>
           <div class="settingsButton" @click="node.settings = !node.settings"> 
@@ -29,7 +30,7 @@
         </div>
       </div>
     </div>
-    <Result :nodes="nodes" :adj="adj" />
+    <Result :nodes="nodes" :adj="adj" @startstring="setInpString" />
 </template>
 
 <script>
@@ -42,6 +43,7 @@ import SettingsPanel from './components/SettingsPanel.vue'
 import HowToUse from './components/HowToUse.vue'
 import TweakPane from './components/TweakPane.vue'
 import Result from './components/Result.vue'
+import Tape from './components/Tape.vue'
 
 export default {
   name: 'App',
@@ -51,7 +53,8 @@ export default {
     SettingsPanel,
     HowToUse,
     TweakPane,
-    Result
+    Result,
+    Tape
   },
   setup(){
     const tweakAble = ref({
@@ -73,6 +76,7 @@ export default {
     const nodes = ref([]) //nodes objects
     const allnodes = ref([]) //nodes DOM elements
     const lines = ref([]) //lines here
+    const inputstr = ref('')
     let selectedOne = false
     let selectedNodeId = null
     const adj = ref([]) //adjacency list of nodes
@@ -85,6 +89,10 @@ export default {
     //initialize adjacency list
     for (let i = 0; i <= nodes.value.length; i++) {
       adj.value[i] = []
+    }
+
+    function setInpString(str){
+      inputstr.value = str
     }
 
     function enterOver(line){
@@ -298,7 +306,7 @@ export default {
       })
     })
 
-    return { tweakAble, nodes, allnodes, toggleNewLink, lines, removeEdge, enterOver, leaveOver, updateLabel, updateInputNode, deleteNode, addNode, adj, linesComputed }
+    return { inputstr, setInpString, tweakAble, nodes, allnodes, toggleNewLink, lines, removeEdge, enterOver, leaveOver, updateLabel, updateInputNode, deleteNode, addNode, adj, linesComputed }
   }
 }
 </script>
@@ -316,10 +324,10 @@ export default {
 <style scoped>
 .contain{
   position: absolute;
-  top: 42%;
+  top: 43%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 70%;
+  height: 65%;
   width: 80%;
   display: grid;
   grid-template-columns: v-bind('tweakAble.leftCol') v-bind('tweakAble.rightCol');

@@ -37,7 +37,8 @@ import { ref } from '@vue/runtime-core'
 
 export default {
   props: ["nodes", "adj"],
-  setup(props, ){
+  emits: ["startstring"],
+  setup(props, { emit }){
     const startstr = ref() //input string
     const answer = ref('') //answer
     const runtype = ref('stepbystep')
@@ -54,6 +55,7 @@ export default {
       prev.value = ''
       curr.value = ''
       loc = 0
+      emit("startstring", startstr.value.value)
     }
 
     function runInput(){
@@ -229,7 +231,7 @@ export default {
   width: 100%;
   margin-top: 20px;
   position: absolute;
-  top: 81%;
+  top: 80%;
   left: 42%;
   transform: translate(-50%, -50%);
 }
