@@ -136,9 +136,9 @@ export default {
       }
     }
 
-    function updateLabel(from, to, lineLabel, changeto, pointermove){
+    function updateLabel(from, lineid, lineLabel, changeto, pointermove){
       adj.value[from].forEach((edge) => {
-        if(edge.to == to){
+        if(edge.lineID == lineid){
           edge.label = lineLabel
           edge.changeTo = changeto
           edge.pointerMove = pointermove
@@ -314,13 +314,13 @@ export default {
         })
 
         //check for duplicate
-        for (let i = 0; i < adj.value.length; i++) {
-          adj.value[i].forEach((j) => {
-            if(i == selectedNodeId && j.to == theid){
-              proceed = false
-            }
-          })
-        }
+        // for (let i = 0; i < adj.value.length; i++) {
+        //   adj.value[i].forEach((j) => {
+        //     if(i == selectedNodeId && j.to == theid){
+        //       proceed = false
+        //     }
+        //   })
+        // }
 
         if(proceed == true){
           let line = null
@@ -352,10 +352,11 @@ export default {
           })
 
           line.color = '#ff4b32FF'
-          lines.value.push({line: line, lineId: (lines.value.length ? lines.value[lines.value.length-1].lineId+1 : 1), from: fromname, to: toname, fromID: from.id, toID: to.id, display: true})
+          let val = (lines.value.length ? lines.value[lines.value.length-1].lineId+1 : 1)
+          lines.value.push({line: line, lineId: val, from: fromname, to: toname, fromID: from.id, toID: to.id, display: true})
 
           //add to adjacency list
-          adj.value[selectedNodeId].push({to: theid, label: '', line: line, changeTo: "~", pointerMove: 'L'}) //edge type
+          adj.value[selectedNodeId].push({to: theid, label: '', line: line, changeTo: "~", pointerMove: 'L', lineID: val}) //edge type
         }
 
         selectedOne = false

@@ -101,8 +101,8 @@ export default {
           let emptyLabel = false
           let multiplechangeto = false
           for (let i = 0; i < props.adj.length; i++) {
-            props.adj[i].forEach((node) => {
-              if(node.label == '' || node.changeTo == ''){
+            props.adj[i].forEach((edge) => {
+              if(edge.label == '' || edge.changeTo == ''){
                 emptyLabel = true
               }
             })
@@ -143,19 +143,7 @@ export default {
                     if(child.label[i] == ' '){
                       proceed = false
                     }
-                    if(i%2 == 0){
-                      if(child.label[i] == ','){
-                        proceed = false
-                        alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
-                      }
-                      letters.push(child.label[i])
-                    }
-                    else{
-                      if(child.label[i] != ','){
-                        proceed = false
-                        alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
-                      }
-                    }
+                    letters.push(child.label[i])
                   }
                   if(proceed && letters.includes(startstr.value.value[node.trav])){
                     arr.push({id: child.to, trav: node.trav+1})
@@ -187,27 +175,12 @@ export default {
 
                 if(node.trav < startstr.value.value.length){
                   props.adj[node.id].forEach((child) => {
-                    let proceed = true
                     let letters = []
                     for (let i = 0; i < child.label.length; i++) {
-                      if(child.label[i] == ' '){
-                        proceed = false
-                      }
-                      if(i%2 == 0){
-                        if(child.label[i] == ','){
-                          proceed = false
-                          alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
-                        }
-                        letters.push(child.label[i])
-                      }
-                      else{
-                        if(child.label[i] != ','){
-                          proceed = false
-                          alert("please use a valid label for the edges (no spaces, all states should be seperated by a comma, no extra commas anywhere)")
-                        }
-                      }
+                      letters.push(child.label[i])
                     }
-                    if(proceed && letters.includes(startstr.value.value[node.trav])){
+
+                    if(letters.includes(startstr.value.value[node.trav])){
                       emit("changeandmove", child.changeTo, child.pointerMove)
                       arr.push({id: child.to, trav: node.trav+1})
                     }

@@ -67,7 +67,7 @@ export default {
         props.line.line.middleLabel = LeaderLine.obj.pathLabel(lineLabel.value)
       }
 
-      emit("edgeLabelUpdated", props.line.fromID, props.line.toID, lineLabel.value, changeChar.value, tapeMove.value) //edge from, edge to, update that adjacency list
+      emit("edgeLabelUpdated", props.line.fromID, props.line.lineId, lineLabel.value, changeChar.value, tapeMove.value) //edge from, edge to, update that adjacency list
     }
 
     return { removeEdge, updateLabel, lineLabel, linetype, changeType, changeChar, tapeMove }

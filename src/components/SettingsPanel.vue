@@ -9,6 +9,8 @@
       <label> Accepting </label>
       <input class="typeinput" type="radio" name="rejecting" value="Rejecting" v-model="nodetype" @change="changeType" />
       <label> Rejecting </label>
+      <input class="typeinput" type="radio" :name="'none'+node.id" :value="null" v-model="nodetype" @change="changeType" />
+      <label> None </label>
     </div>
     <div class="inputselect">
       <label>Start State: </label>
@@ -30,13 +32,18 @@ export default {
     const tweakAble = props.tweakAble
 
     function changeType(){
-      props.node.nodetype = nodetype.value
+      if(nodetype.value != null){
+        props.node.nodetype = nodetype.value
 
-      props.nodes.forEach((node) => {
-        if(node.id != props.node.id && node.nodetype == nodetype.value){
-          node.nodetype = null
-        }
-      })
+        props.nodes.forEach((node) => {
+          if(node.id != props.node.id && node.nodetype == nodetype.value){
+            node.nodetype = null
+          }
+        })
+      }
+      else{
+        props.node.nodetype = nodetype.value
+      }
 
       emit("changedNodeType")
     }
@@ -77,6 +84,10 @@ export default {
       inputornot.value = props.node.input
     })
 
+    watch(() => props.node.nodetype, () => {
+      nodetype.value = props.node.nodetype
+    })
+
     onBeforeMount(() => {
       nodetype.value = props.node.nodetype
       inputornot.value = props.node.input
@@ -95,7 +106,7 @@ export default {
   position: absolute;
   bottom: 0;
   right: 105%;
-  height: 105px;
+  height: 120px;
   width: 100px;
   background: v-bind('tweakAble.settingsPanelColor');
   border-radius: 20px;
