@@ -31,6 +31,7 @@
       </div>
     </div>
     <Result :nodes="nodes" :lines="lines" :adj="adj" @startstring="setInpString" :reset="reset" :removed="removed" @changeandmove="changeAndMove" />
+    <Footer />
 </template>
 
 <script>
@@ -44,6 +45,7 @@ import HowToUse from './components/HowToUse.vue'
 import TweakPane from './components/TweakPane.vue'
 import Result from './components/Result.vue'
 import Tape from './components/Tape.vue'
+import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
@@ -54,7 +56,8 @@ export default {
     HowToUse,
     TweakPane,
     Result,
-    Tape
+    Tape,
+    Footer
   },
   setup(){
     const tweakAble = ref({
