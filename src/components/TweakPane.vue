@@ -12,7 +12,8 @@ export default {
         const thePane = new Pane()
         thePane.registerPlugin(EssentialsPlugin);
         const pane = thePane.addFolder({
-            title: 'customize'
+            title: 'customize',
+            expanded: false
         })
         pane.addInput(props.tweakAble, 'edgeColor').on('change', (ev) =>{
             props.lines.forEach((line) => {
