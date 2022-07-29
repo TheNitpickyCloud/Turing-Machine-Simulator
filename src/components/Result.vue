@@ -66,6 +66,23 @@ export default {
       }
     )
 
+    watch(
+      () => runtype.value,
+      () => {
+        nxt.value = startstr.value.value
+        prev.value = ''
+        curr.value = ''
+        loc = 0
+        arr2 = []
+        props.lines.forEach((line) => {
+          line.line.color = '#ff4b32ff'
+          line.line.size = 4
+        })
+        lastChild = null
+        emit("startstring", startstr.value.value)
+      }
+    )
+
     function updateStr(){
       nxt.value = startstr.value.value
       prev.value = ''
