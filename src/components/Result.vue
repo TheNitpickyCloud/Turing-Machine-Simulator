@@ -73,8 +73,10 @@ export default {
       loc = 0
       arr2 = []
       if(lastChild != null){
-        lastChild.line.color = '#ff4b32ff'
-        lastChild.line.size = 4
+        lastChild.forEach((lastchild) => {
+          lastchild.line.color = '#ff4b32ff'
+          lastchild.line.size = 4
+        })
         lastChild = null
       }
       emit("startstring", startstr.value.value)
@@ -162,6 +164,7 @@ export default {
             }
 
             if(runtype.value == 'immediately'){
+              emit("startstring", startstr.value.value)
               let arr = []
               arr.push({id: inpnode, trav: 0})
 
@@ -200,8 +203,10 @@ export default {
             }
             else{
               if(lastChild != null){
-                lastChild.line.color = '#ff4b32ff'
-                lastChild.line.size = 4
+                lastChild.forEach((lastchild) => {
+                  lastchild.line.color = '#ff4b32ff'
+                  lastchild.line.size = 4
+                })
                 lastChild = null
               }
 
@@ -236,8 +241,11 @@ export default {
                         arr3.push({id: child.to, trav: node.trav+1})
                         child.line.color = 'blue'
                         child.line.size = 5
-                        lastChild = child
-                        emit("changeandmove", child.changeTo, child.pointerMove)
+                        if(lastChild === null){
+                          lastChild = []
+                          emit("changeandmove", child.changeTo, child.pointerMove)
+                        }
+                        lastChild.push(child)
                       }
                     })
                   }
@@ -271,6 +279,7 @@ export default {
                 nxt.value = startstr.value.value
                 arr2 = []
                 loc = 0
+                emit("startstring", startstr.value.value)
               }
             }
           }
