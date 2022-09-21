@@ -119,10 +119,19 @@ export default {
         else{
           let emptyLabel = false
           let multiplechangeto = false
+          let nochangeto = false
+          let duplicateLabel = false
           for (let i = 0; i < props.adj.length; i++) {
+            let labelList = []
             props.adj[i].forEach((edge) => {
-              if(edge.label == '' || edge.changeTo == ''){
+              if(edge.label == ''){
                 emptyLabel = true
+              }
+              else if(labelList.includes(edge.label)){
+                duplicateLabel = true
+              }
+              else{
+                labelList.push(edge.label)
               }
             })
           }
@@ -132,6 +141,9 @@ export default {
               if(node.changeTo.length > 1){
                 multiplechangeto = true
               }
+              if(node.changeTo.length == 0){
+                nochangeto = true
+              }
             })
           }
 
@@ -139,7 +151,13 @@ export default {
             alert("please make sure all edges have labels")
           }
           else if(multiplechangeto){
-            alert("please make sure all edges have only 1 char to change to")
+            alert("please make sure all edges have only 1 character to change in the tape")
+          }
+          else if(nochangeto){
+            alert("please make sure all edges have a character to change in the tape")
+          }
+          else if(duplicateLabel){
+            alert("please make sure there are no edges with the same labels exiting a node")
           }
           else{
             let arr = []
