@@ -1,7 +1,7 @@
 # tmsite
 
 ## Website link
-https://tmsite.herokuapp.com/
+https://tmsite.vercel.app/
 
 ## Project setup
 ```
